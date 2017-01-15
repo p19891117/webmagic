@@ -1,10 +1,18 @@
 package us.codecraft.webmagic;
 
-import us.codecraft.webmagic.utils.Experimental;
-
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import us.codecraft.webmagic.utils.Experimental;
 
 /**
  * Object contains url to crawl.<br>
@@ -20,7 +28,10 @@ public class Request implements Serializable {
     public static final String CYCLE_TRIED_TIMES = "_cycle_tried_times";
     public static final String STATUS_CODE = "statusCode";
     public static final String PROXY = "proxy";
-
+    
+    private static final String namevaluepair = "nameValuePair";
+    private static final String typekey = "contentTypeKey";
+    
     private String url;
 
     private String method;
@@ -133,4 +144,83 @@ public class Request implements Serializable {
                 ", priority=" + priority +
                 '}';
     }
+    /**
+     * 获得post的请求参数集合
+     * @return
+     */
+	public List<NameValuePair> getNameValuePairs() {
+		@SuppressWarnings("unchecked")
+		List<NameValuePair> nvps = (List<NameValuePair>) getExtra(namevaluepair);
+		Iterator<NameValuePair> iter = nvps.iterator();
+		while(iter.hasNext()){
+			if(iter.next()==null)
+				iter.remove();
+		}
+		return nvps;
+	}
+	/**
+	 * 为post设置参数，若name为kong，设置无效。
+	 * @param name
+	 * @param value
+	 */
+	public void putNameValuePair(String name,String value){
+		@SuppressWarnings("unchecked")
+		List<NameValuePair> nvps = (List<NameValuePair>) getExtra(namevaluepair);
+		if(nvps==null){
+			nvps = new ArrayList<NameValuePair>();
+			putExtra(namevaluepair, nvps);
+		}
+		if(StringUtils.isBlank(name))
+			return; 
+		nvps.add(new BasicNameValuePair(name, value));
+	}
+	public void setType(ContentType type) {
+		putExtra(typekey, type);
+	}
+	public ContentType getType() {
+		ContentType  type = (ContentType) getExtra(typekey);
+		if(type==null)
+			type = ContentType.TXT;
+		return type;
+	}
+	/**
+	 * 当内容为文件下载时，设置该文件保存的目录，位于程序所在目录的相对目录
+	 * @param dir
+	 */
+	public void setFileDir(String dir){
+		putExtra("fileDirKey", dir);
+	}
+	/**
+	 * 获取文件保存的目录
+	 * @return
+	 */
+	public String getFileDir(){
+		String dir = (String) getExtra("fileDirKey");
+		if(StringUtils.isBlank(dir))
+			dir = "workspace";
+		return dir;
+	}
+	/**
+	 * 当内容为文件下载时，设置该文件名称（包含文件后缀）
+	 * @param fileName
+	 */
+	public void setFileName(String fileName){
+		putExtra("fileNameKey", fileName);
+	}
+	/**
+	 * 获取文件的名称
+	 * @return
+	 */
+	public String getFileName(){
+		String fileName = (String) getExtra("fileNameKey");
+		if(StringUtils.isBlank(fileName))
+			fileName = UUID.randomUUID().toString().replace("-", "").toUpperCase();;
+		return fileName;
+	}
+	public SpiderProcess getSpiderProcess(){
+		return (SpiderProcess) getExtra("SpiderProcessKey");
+	}
+	public void setSpiderProcess(SpiderProcess spiderProcess){
+		putExtra("SpiderProcessKey", spiderProcess);
+	}
 }

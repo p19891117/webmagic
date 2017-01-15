@@ -1,13 +1,18 @@
 package us.codecraft.webmagic;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.http.HttpHost;
 import org.apache.http.auth.UsernamePasswordCredentials;
+
 import us.codecraft.webmagic.proxy.Proxy;
 import us.codecraft.webmagic.proxy.ProxyPool;
 import us.codecraft.webmagic.proxy.SimpleProxyPool;
-import us.codecraft.webmagic.utils.UrlUtils;
-
-import java.util.*;
 
 /**
  * Object contains setting for crawler.<br>
@@ -27,11 +32,6 @@ public class Site {
     private Map<String, Map<String, String>> cookies = new HashMap<String, Map<String, String>>();
 
     private String charset;
-
-    /**
-     * startUrls is the urls the crawler to start with.
-     */
-    private List<Request> startRequests = new ArrayList<Request>();
 
     private int sleepTime = 5000;
 
@@ -57,16 +57,6 @@ public class Site {
 
     private boolean useGzip = true;
 
-    /**
-     * @see us.codecraft.webmagic.utils.HttpConstant.Header
-     * @deprecated
-     */
-    public static interface HeaderConst {
-
-        public static final String REFERER = "Referer";
-    }
-
-
     static {
         DEFAULT_STATUS_CODE_SET.add(200);
     }
@@ -79,7 +69,9 @@ public class Site {
     public static Site me() {
         return new Site();
     }
-
+    public static SiteBuilder custom(){
+    	return new SiteBuilder();
+    }
     /**
      * Add a cookie with domain {@link #getDomain()}
      *
@@ -223,52 +215,6 @@ public class Site {
      */
     public Set<Integer> getAcceptStatCode() {
         return acceptStatCode;
-    }
-
-    /**
-     * get start urls
-     *
-     * @return start urls
-     * @see #getStartRequests
-     * @deprecated
-     */
-    @Deprecated
-    public List<String> getStartUrls() {
-        return UrlUtils.convertToUrls(startRequests);
-    }
-
-    public List<Request> getStartRequests() {
-        return startRequests;
-    }
-
-    /**
-     * Add a url to start url.<br>
-     * Because urls are more a Spider's property than Site, move it to {@link Spider#addUrl(String...)}}
-     *
-     * @param startUrl startUrl
-     * @return this
-     * @see Spider#addUrl(String...)
-     * @deprecated
-     */
-    public Site addStartUrl(String startUrl) {
-        return addStartRequest(new Request(startUrl));
-    }
-
-    /**
-     * Add a url to start url.<br>
-     * Because urls are more a Spider's property than Site, move it to {@link Spider#addRequest(Request...)}}
-     *
-     * @param startRequest startRequest
-     * @return this
-     * @see Spider#addRequest(Request...)
-     * @deprecated
-     */
-    public Site addStartRequest(Request startRequest) {
-        this.startRequests.add(startRequest);
-        if (domain == null && startRequest.getUrl() != null) {
-            domain = UrlUtils.getDomain(startRequest.getUrl());
-        }
-        return this;
     }
 
     /**
@@ -428,8 +374,6 @@ public class Site {
             return false;
         if (domain != null ? !domain.equals(site.domain) : site.domain != null) return false;
         if (headers != null ? !headers.equals(site.headers) : site.headers != null) return false;
-        if (startRequests != null ? !startRequests.equals(site.startRequests) : site.startRequests != null)
-            return false;
         if (userAgent != null ? !userAgent.equals(site.userAgent) : site.userAgent != null) return false;
 
         return true;
@@ -441,7 +385,6 @@ public class Site {
         result = 31 * result + (userAgent != null ? userAgent.hashCode() : 0);
         result = 31 * result + (defaultCookies != null ? defaultCookies.hashCode() : 0);
         result = 31 * result + (charset != null ? charset.hashCode() : 0);
-        result = 31 * result + (startRequests != null ? startRequests.hashCode() : 0);
         result = 31 * result + sleepTime;
         result = 31 * result + retryTimes;
         result = 31 * result + cycleRetryTimes;
@@ -458,7 +401,6 @@ public class Site {
                 ", userAgent='" + userAgent + '\'' +
                 ", cookies=" + defaultCookies +
                 ", charset='" + charset + '\'' +
-                ", startRequests=" + startRequests +
                 ", sleepTime=" + sleepTime +
                 ", retryTimes=" + retryTimes +
                 ", cycleRetryTimes=" + cycleRetryTimes +

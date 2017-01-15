@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		targetNamespace="http://www.qysudu.com/" 
+		xmlns:tns="http://www.qysudu.com/"
+		elementFormDefault="qualified">
+	<xs:element name="app" type="tns:apptype"/>
+	
+	<xs:complexType name="apptype">
+		<xs:complexContent>
+			<xs:extension base="tns:comm_att_desc">
+				<xs:sequence>
+					<xs:element name="site" type="tns:spidertype" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="spidertype">
+		<xs:complexContent>
+			<xs:extension base="tns:comm_att_desc">
+				<xs:sequence >
+					<xs:element name="userAgent" type="xs:string" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="charset" type="xs:string" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="sleepTime" type="xs:int" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="retryTimes" type="xs:int" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="cycleRetryTimes" type="xs:int" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="retrySleepTime" type="xs:int" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="timeOut" type="xs:int" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="useGzip" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="Header" type="tns:headtype" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="headtype">
+		<xs:sequence>
+			<xs:element name="key-value" type="tns:key-valuetype" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="key-valuetype">
+		<xs:attribute name="name"  type="xs:string" />
+		<xs:attribute name="value"  type="xs:string" />
+	</xs:complexType>
+	<xs:complexType name="scripttype">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded" >
+			<xs:element name="instance" type="tns:instancetype" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="instancetype">
+		<xs:attribute name="name" type="xs:string" />
+		<xs:attribute name="value" type="xs:string" />
+	</xs:complexType>
+	<xs:complexType name="comm_att_desc">
+		<xs:attribute name="desc" type="xs:string"/>
+	</xs:complexType>
+</xs:schema>

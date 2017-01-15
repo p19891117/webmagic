@@ -1,8 +1,23 @@
 package us.codecraft.webmagic;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import us.codecraft.webmagic.downloader.Downloader;
 import us.codecraft.webmagic.downloader.HttpClientDownloader;
 import us.codecraft.webmagic.pipeline.CollectorPipeline;
@@ -15,16 +30,6 @@ import us.codecraft.webmagic.scheduler.Scheduler;
 import us.codecraft.webmagic.thread.CountableThreadPool;
 import us.codecraft.webmagic.utils.UrlUtils;
 import us.codecraft.webmagic.utils.WMCollections;
-
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Entrance of a crawler.<br>
@@ -58,16 +63,13 @@ import java.util.concurrent.locks.ReentrantLock;
  * @since 0.1.0
  */
 public class Spider implements Runnable, Task {
+	private SpiderProcess spiderProcess;
 
     protected Downloader downloader;
 
     protected List<Pipeline> pipelines = new ArrayList<Pipeline>();
 
     protected PageProcessor pageProcessor;
-
-    protected List<Request> startRequests;
-
-    protected Site site;
 
     protected String uuid;
 
@@ -111,48 +113,9 @@ public class Spider implements Runnable, Task {
      * create a spider with pageProcessor.
      *
      * @param pageProcessor pageProcessor
-     * @return new spider
-     * @see PageProcessor
-     */
-    public static Spider create(PageProcessor pageProcessor) {
-        return new Spider(pageProcessor);
-    }
-
-    /**
-     * create a spider with pageProcessor.
-     *
-     * @param pageProcessor pageProcessor
      */
     public Spider(PageProcessor pageProcessor) {
         this.pageProcessor = pageProcessor;
-        this.site = pageProcessor.getSite();
-        this.startRequests = pageProcessor.getSite().getStartRequests();
-    }
-
-    /**
-     * Set startUrls of Spider.<br>
-     * Prior to startUrls of Site.
-     *
-     * @param startUrls startUrls
-     * @return this
-     */
-    public Spider startUrls(List<String> startUrls) {
-        checkIfRunning();
-        this.startRequests = UrlUtils.convertToRequests(startUrls);
-        return this;
-    }
-
-    /**
-     * Set startUrls of Spider.<br>
-     * Prior to startUrls of Site.
-     *
-     * @param startRequests startRequests
-     * @return this
-     */
-    public Spider startRequest(List<Request> startRequests) {
-        checkIfRunning();
-        this.startRequests = startRequests;
-        return this;
     }
 
     /**
@@ -165,18 +128,6 @@ public class Spider implements Runnable, Task {
     public Spider setUUID(String uuid) {
         this.uuid = uuid;
         return this;
-    }
-
-    /**
-     * set scheduler for Spider
-     *
-     * @param scheduler scheduler
-     * @return this
-     * @see #setScheduler(us.codecraft.webmagic.scheduler.Scheduler)
-     */
-    @Deprecated
-    public Spider scheduler(Scheduler scheduler) {
-        return setScheduler(scheduler);
     }
 
     /**
@@ -198,18 +149,6 @@ public class Spider implements Runnable, Task {
             }
         }
         return this;
-    }
-
-    /**
-     * add a pipeline for Spider
-     *
-     * @param pipeline pipeline
-     * @return this
-     * @see #addPipeline(us.codecraft.webmagic.pipeline.Pipeline)
-     * @deprecated
-     */
-    public Spider pipeline(Pipeline pipeline) {
-        return addPipeline(pipeline);
     }
 
     /**
@@ -255,18 +194,6 @@ public class Spider implements Runnable, Task {
      *
      * @param downloader downloader
      * @return this
-     * @see #setDownloader(us.codecraft.webmagic.downloader.Downloader)
-     * @deprecated
-     */
-    public Spider downloader(Downloader downloader) {
-        return setDownloader(downloader);
-    }
-
-    /**
-     * set the downloader of spider
-     *
-     * @param downloader downloader
-     * @return this
      * @see Downloader
      */
     public Spider setDownloader(Downloader downloader) {
@@ -289,12 +216,6 @@ public class Spider implements Runnable, Task {
             } else {
                 threadPool = new CountableThreadPool(threadNum);
             }
-        }
-        if (startRequests != null) {
-            for (Request request : startRequests) {
-                scheduler.push(request, this);
-            }
-            startRequests.clear();
         }
         startTime = new Date();
     }
@@ -336,6 +257,8 @@ public class Spider implements Runnable, Task {
         if (destroyWhenExit) {
             close();
         }
+        if(spiderProcess!=null)
+        	spiderProcess.process();
     }
 
     protected void onError(Request request) {
@@ -401,16 +324,17 @@ public class Spider implements Runnable, Task {
     }
 
     protected void processRequest(Request request) {
+    	request.setSpiderProcess(spiderProcess);
         Page page = downloader.download(request, this);
         if (page == null) {
-            sleep(site.getSleepTime());
+            sleep(getSite().getSleepTime());
             onError(request);
             return;
         }
         // for cycle retry
         if (page.isNeedCycleRetry()) {
             extractAndAddRequests(page, true);
-            sleep(site.getRetrySleepTime());
+            sleep(getSite().getRetrySleepTime());
             return;
         }
         pageProcessor.process(page);
@@ -422,7 +346,7 @@ public class Spider implements Runnable, Task {
         }
         //for proxy status management
         request.putExtra(Request.STATUS_CODE, page.getStatusCode());
-        sleep(site.getSleepTime());
+        sleep(getSite().getSleepTime());
     }
 
     protected void sleep(int time) {
@@ -442,8 +366,8 @@ public class Spider implements Runnable, Task {
     }
 
     private void addRequest(Request request) {
-        if (site.getDomain() == null && request != null && request.getUrl() != null) {
-            site.setDomain(UrlUtils.getDomain(request.getUrl()));
+        if (getSite().getDomain() == null && request != null && request.getUrl() != null) {
+        	getSite().setDomain(UrlUtils.getDomain(request.getUrl()));
         }
         scheduler.push(request, this);
     }
@@ -483,7 +407,6 @@ public class Spider implements Runnable, Task {
     public <T> List<T> getAll(Collection<String> urls) {
         destroyWhenExit = false;
         spawnUrl = false;
-        startRequests.clear();
         for (Request request : UrlUtils.convertToRequests(urls)) {
             addRequest(request);
         }
@@ -689,8 +612,8 @@ public class Spider implements Runnable, Task {
         if (uuid != null) {
             return uuid;
         }
-        if (site != null) {
-            return site.getDomain();
+        if (getSite() != null) {
+            return getSite().getDomain();
         }
         uuid = UUID.randomUUID().toString();
         return uuid;
@@ -704,7 +627,7 @@ public class Spider implements Runnable, Task {
 
     @Override
     public Site getSite() {
-        return site;
+        return pageProcessor.getSite();
     }
 
     public List<SpiderListener> getSpiderListeners() {
@@ -731,5 +654,8 @@ public class Spider implements Runnable, Task {
      */
     public void setEmptySleepTime(int emptySleepTime) {
         this.emptySleepTime = emptySleepTime;
+    }
+    public void setSpiderProcess(SpiderProcess spiderProcess){
+    	this.spiderProcess = spiderProcess;
     }
 }
