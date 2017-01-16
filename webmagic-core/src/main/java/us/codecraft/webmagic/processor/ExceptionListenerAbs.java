@@ -17,11 +17,26 @@ public abstract class ExceptionListenerAbs implements ExceptionListener{
 			processSCE(page, pageProcessor, (StatusCodeException)e);
 		}
 	}
-
+	/**
+	 * 下载过程出现状态码区间非200时，抛异常
+	 * @param page
+	 * @param pageProcessor
+	 * @param e
+	 */
 	protected abstract  void processSCE(Page page, PageProcessor pageProcessor, StatusCodeException e);
-
+	/**
+	 * 调用httpclient组件进行下载过程中出现异常。
+	 * @param page
+	 * @param pageProcessor
+	 * @param e
+	 */
 	protected abstract  void processPDE(Page page, PageProcessor pageProcessor, Throwable e);
-
+	/**
+	 * 当页面没有对应处理类处理，抛异常
+	 * @param page
+	 * @param pageProcessor
+	 * @param e
+	 */
 	protected abstract void processNPE(Page page, PageProcessor pageProcessor, NoPageProcessException e);
 
 }

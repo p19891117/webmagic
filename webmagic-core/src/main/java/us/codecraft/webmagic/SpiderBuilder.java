@@ -150,7 +150,13 @@ public class SpiderBuilder{
 		this.uRLProcess.add(uRLProcess);
 		return this;
 	}
-	public void setDuplicateRemover(DuplicateRemover duplicateRemover) {
+	public SpiderBuilder setDuplicateRemover(DuplicateRemover duplicateRemover) {
 		this.duplicateRemover = duplicateRemover;
+		return this;
 	}
+	public SpiderBuilder setExceptionListener(ExceptionListener exception) {
+		this.exception = exception;
+		return this;
+	}
+	
 }
