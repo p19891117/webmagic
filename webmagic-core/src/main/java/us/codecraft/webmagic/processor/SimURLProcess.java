@@ -8,7 +8,7 @@ import us.codecraft.webmagic.Page;
 public class SimURLProcess extends URLProcessAbs {
 	private static final Logger logger = LoggerFactory.getLogger(SimURLProcess.class);
 	public SimURLProcess() {
-		addURI("/");
+		addPattern("/");
 	}
 	@Override
 	public void process(PageProcessor pageProcessor, Page page) {

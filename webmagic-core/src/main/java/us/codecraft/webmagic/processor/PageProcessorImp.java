@@ -33,10 +33,11 @@ public class PageProcessorImp implements PageProcessor{
 				boolean flag = false;
 				String url = page.getRequest().getUrl();
 				for(URLProcess uRLProces:uRLProcess){
-					if(!uRLProces.containURI(url))
+					if(!uRLProces.matcher(url))
 						continue;
 					uRLProces.process(this,page);
 					flag = true;
+					break;
 				}
 				if(!flag)
 					throw new NoPageProcessException("缺少处理类处理该url["+url+"]");

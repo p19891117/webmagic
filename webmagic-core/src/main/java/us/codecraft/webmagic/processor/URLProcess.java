@@ -8,12 +8,12 @@ public interface URLProcess {
 	 * @param url
 	 * @return
 	 */
-	boolean containURI(String url);
+	boolean matcher(String url);
 	/**
 	 * 给页面处理类添加一个uri，用来匹配url
 	 * @param uri
 	 */
-	public void addURI(String uri);
+	public void addPattern(String pattern);
 	/**
 	 * 处理页面内容
 	 * @param pageProcessor 

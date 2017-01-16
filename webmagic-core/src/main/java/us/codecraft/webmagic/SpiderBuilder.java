@@ -15,18 +15,49 @@ import us.codecraft.webmagic.processor.PageProcessorImp;
 import us.codecraft.webmagic.processor.URLProcess;
 import us.codecraft.webmagic.scheduler.QueueScheduler;
 import us.codecraft.webmagic.scheduler.Scheduler;
+import us.codecraft.webmagic.scheduler.component.DuplicateRemover;
+import us.codecraft.webmagic.scheduler.component.SimRemover;
 
 public class SpiderBuilder{
+	/**
+	 * 设置pageprocess
+	 */
 	private PageProcessor pageProcessor;
+	/**
+	 * 设置spider级别的数据存储处理
+	 */
 	private SpiderProcess spiderProcess;
+	/**
+	 * 设置downloader
+	 */
 	private Downloader downloader;
+	/**
+	 * 设置page级别的数据存储处理
+	 */
 	private List<Pipeline> pipelines = new ArrayList<Pipeline>();
+	/**
+	 * 设置url管理
+	 */
 	private Scheduler scheduler;
+	/**
+	 * 设置url驱虫策略
+	 */
+	private DuplicateRemover duplicateRemover;
+	/**
+	 * 设置spiderlistener
+	 */
     private List<SpiderListener> spiderListeners = new ArrayList<SpiderListener>();
-    
+    /**
+     * 设置url处理类
+     */
     private List<URLProcess> uRLProcess = new ArrayList<URLProcess>();
+    /**
+     * 设置异常处理策略
+     */
 	private ExceptionListener exception;
-	
+	/**
+	 * 设置开始url
+	 */
 	private List<Request> requests = new ArrayList<Request>();
     public Spider build(){
     	if(pageProcessor==null){
@@ -46,9 +77,11 @@ public class SpiderBuilder{
     	if(pipelines.size()>0){
     		spider.setPipelines(pipelines);
     	}
-    	if(scheduler==null){
+    	if(scheduler==null)
     		scheduler = new QueueScheduler();
-    	}
+    	if(duplicateRemover==null)
+    		duplicateRemover = new SimRemover();
+    	((QueueScheduler)scheduler).setDuplicateRemover(duplicateRemover);
     	spider.setScheduler(scheduler);
     	if(spiderListeners.size()>0){
     		spider.setSpiderListeners(spiderListeners);
@@ -116,5 +149,8 @@ public class SpiderBuilder{
 			return this;
 		this.uRLProcess.add(uRLProcess);
 		return this;
+	}
+	public void setDuplicateRemover(DuplicateRemover duplicateRemover) {
+		this.duplicateRemover = duplicateRemover;
 	}
 }

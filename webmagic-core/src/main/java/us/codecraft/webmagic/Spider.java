@@ -15,6 +15,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.jsoup.helper.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -366,8 +367,12 @@ public class Spider implements Runnable, Task {
     }
 
     private void addRequest(Request request) {
-        if (getSite().getDomain() == null && request != null && request.getUrl() != null) {
-        	getSite().setDomain(UrlUtils.getDomain(request.getUrl()));
+    	if(request==null||StringUtil.isBlank(request.getUrl()))
+    		return;
+    	Site site = getSite();
+        if (site.getDomain() == null) {
+        	site.setDomain(UrlUtils.getDomain(request.getUrl()));
+        	site.addHeader("Host", site.getDomain());
         }
         scheduler.push(request, this);
     }
@@ -657,5 +662,8 @@ public class Spider implements Runnable, Task {
     }
     public void setSpiderProcess(SpiderProcess spiderProcess){
     	this.spiderProcess = spiderProcess;
+    }
+    public static SpiderBuilder custom(){
+    	return new SpiderBuilder();
     }
 }

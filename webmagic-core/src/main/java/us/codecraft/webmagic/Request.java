@@ -151,6 +151,8 @@ public class Request implements Serializable {
 	public List<NameValuePair> getNameValuePairs() {
 		@SuppressWarnings("unchecked")
 		List<NameValuePair> nvps = (List<NameValuePair>) getExtra(namevaluepair);
+		if(nvps==null)
+			return new ArrayList<NameValuePair>();;
 		Iterator<NameValuePair> iter = nvps.iterator();
 		while(iter.hasNext()){
 			if(iter.next()==null)
@@ -222,5 +224,8 @@ public class Request implements Serializable {
 	}
 	public void setSpiderProcess(SpiderProcess spiderProcess){
 		putExtra("SpiderProcessKey", spiderProcess);
+	}
+	public static ReqBuilder custom(){
+		return new ReqBuilder();
 	}
 }
