@@ -219,12 +219,6 @@ public class Request implements Serializable {
 			fileName = UUID.randomUUID().toString().replace("-", "").toUpperCase();;
 		return fileName;
 	}
-	public SpiderProcess getSpiderProcess(){
-		return (SpiderProcess) getExtra("SpiderProcessKey");
-	}
-	public void setSpiderProcess(SpiderProcess spiderProcess){
-		putExtra("SpiderProcessKey", spiderProcess);
-	}
 	public static ReqBuilder custom(){
 		return new ReqBuilder();
 	}

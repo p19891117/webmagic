@@ -41,7 +41,7 @@ public class Page {
     private int statusCode;
 
     private boolean needCycleRetry;
-
+    private SpiderProcess spiderProcess;
     private List<Request> targetRequests = new ArrayList<Request>();
 
     public Page() {
@@ -229,4 +229,11 @@ public class Page {
                 ", targetRequests=" + targetRequests +
                 '}';
     }
+
+	public void setSpiderProcess(SpiderProcess spiderProcess) {
+		this.spiderProcess = spiderProcess;
+	}
+	public SpiderProcess getSpiderProcess(){
+		return this.spiderProcess;
+	}
 }

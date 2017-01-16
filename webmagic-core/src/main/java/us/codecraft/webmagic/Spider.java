@@ -325,7 +325,6 @@ public class Spider implements Runnable, Task {
     }
 
     protected void processRequest(Request request) {
-    	request.setSpiderProcess(spiderProcess);
         Page page = downloader.download(request, this);
         if (page == null) {
             sleep(getSite().getSleepTime());
@@ -338,6 +337,7 @@ public class Spider implements Runnable, Task {
             sleep(getSite().getRetrySleepTime());
             return;
         }
+        page.setSpiderProcess(spiderProcess);
         pageProcessor.process(page);
         extractAndAddRequests(page, spawnUrl);
         if (!page.getResultItems().isSkip()) {
