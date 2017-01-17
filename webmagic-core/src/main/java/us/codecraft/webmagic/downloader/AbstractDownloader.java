@@ -20,6 +20,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.protocol.HttpContext;
@@ -107,6 +108,7 @@ public abstract class AbstractDownloader implements Downloader {
         if (site != null) {
             httpClientBuilder.setRetryHandler(new DefaultHttpRequestRetryHandler(site.getRetryTimes(), true));
         }
+        httpClientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
         CookieStore cookieStore = new BasicCookieStore();
         for (Map.Entry<String, String> cookieEntry : site.getCookies().entrySet()) {
             BasicClientCookie cookie = new BasicClientCookie(cookieEntry.getKey(), cookieEntry.getValue());
