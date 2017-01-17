@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +17,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +67,8 @@ import us.codecraft.webmagic.utils.WMCollections;
  * @since 0.1.0
  */
 public class Spider implements Runnable, Task {
-	private SpiderProcess spiderProcess;
+	private SpiderExtraProcess spiderExtraProcess;
+	private Map<String, Object> extra = new HashMap<String, Object>();
 
     protected Downloader downloader;
 
@@ -258,8 +262,8 @@ public class Spider implements Runnable, Task {
         if (destroyWhenExit) {
             close();
         }
-        if(spiderProcess!=null)
-        	spiderProcess.process();
+        if(spiderExtraProcess!=null)
+        	spiderExtraProcess.process(extra);
     }
 
     protected void onError(Request request) {
@@ -337,8 +341,7 @@ public class Spider implements Runnable, Task {
             sleep(getSite().getRetrySleepTime());
             return;
         }
-        page.setSpiderProcess(spiderProcess);
-        pageProcessor.process(page);
+        pageProcessor.process(this,page);
         extractAndAddRequests(page, spawnUrl);
         if (!page.getResultItems().isSkip()) {
             for (Pipeline pipeline : pipelines) {
@@ -660,10 +663,31 @@ public class Spider implements Runnable, Task {
     public void setEmptySleepTime(int emptySleepTime) {
         this.emptySleepTime = emptySleepTime;
     }
-    public void setSpiderProcess(SpiderProcess spiderProcess){
-    	this.spiderProcess = spiderProcess;
+    public void setSpiderProcess(SpiderExtraProcess spiderProcess){
+    	this.spiderExtraProcess = spiderProcess;
     }
+    @Override
+	public SpiderExtraProcess getSpiderProcess() {
+		return spiderExtraProcess;
+	}
     public static SpiderBuilder custom(){
     	return new SpiderBuilder();
     }
+    @Override
+    public void putExtra(String key,Object value){
+		if(StringUtils.isBlank(key))
+			return;
+		extra.put(key, value);
+	}
+    @Override
+	public void removeExtra(String key){
+		if(StringUtils.isBlank(key))
+			return;
+		extra.remove(key);
+	}
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> T getExtra(String key){
+		return (T) extra.get(key);
+	}
 }

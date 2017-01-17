@@ -1,6 +1,7 @@
 package us.codecraft.webmagic.processor;
 
 import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.Task;
 
 public interface URLProcess {
 	/**
@@ -16,8 +17,9 @@ public interface URLProcess {
 	public void addPattern(String pattern);
 	/**
 	 * 处理页面内容
+	 * @param task 
 	 * @param pageProcessor 
 	 * @param page
 	 */
-	void process(PageProcessor pageProcessor, Page page);
+	void process(Task task, PageProcessor pageProcessor, Page page);
 }

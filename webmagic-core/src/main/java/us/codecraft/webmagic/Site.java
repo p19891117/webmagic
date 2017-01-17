@@ -342,20 +342,6 @@ public class Site {
         return this;
     }
 
-    public Task toTask() {
-        return new Task() {
-            @Override
-            public String getUUID() {
-                return Site.this.getDomain();
-            }
-
-            @Override
-            public Site getSite() {
-                return Site.this;
-            }
-        };
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

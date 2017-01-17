@@ -1,7 +1,10 @@
 package us.codecraft.webmagic;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,7 +29,7 @@ public class SpiderBuilder{
 	/**
 	 * 设置spider级别的数据存储处理
 	 */
-	private SpiderProcess spiderProcess;
+	private SpiderExtraProcess spiderProcess;
 	/**
 	 * 设置downloader
 	 */
@@ -59,6 +62,7 @@ public class SpiderBuilder{
 	 * 设置开始url
 	 */
 	private List<Request> requests = new ArrayList<Request>();
+	private Map<String, Object> extra = new HashMap<String, Object>();
     public Spider build(){
     	if(pageProcessor==null){
     		PageProcessBuilder build = PageProcessorImp.custom();
@@ -69,6 +73,8 @@ public class SpiderBuilder{
     		pageProcessor = build.build();
     	}
     	Spider spider = new Spider(pageProcessor);
+    	for(Entry<String, Object> entry:extra.entrySet())
+    		spider.putExtra(entry.getKey(), entry.getValue());
     	if(downloader==null)
     		downloader = new HttpClientDownloader();
     	spider.setDownloader(downloader);
@@ -134,7 +140,7 @@ public class SpiderBuilder{
 		}
 		return this;
 	}
-	public SpiderBuilder setSpiderProcess(SpiderProcess spiderProcess) {
+	public SpiderBuilder setSpiderProcess(SpiderExtraProcess spiderProcess) {
 		this.spiderProcess = spiderProcess;
 		return this;
 	}
@@ -158,5 +164,10 @@ public class SpiderBuilder{
 		this.exception = exception;
 		return this;
 	}
-	
+	public SpiderBuilder putExtra(String key,Object value){
+		if(StringUtils.isBlank(key))
+			return this;
+		extra.put(key, value);
+		return this;
+	}
 }

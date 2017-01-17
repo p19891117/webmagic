@@ -29,7 +29,6 @@ import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.interceptor.UseGZipHttpRequestInterceptor;
 import us.codecraft.webmagic.proxy.Proxy;
-import us.codecraft.webmagic.selector.Html;
 
 /**
  * Base class of downloader with some common methods.
@@ -54,27 +53,6 @@ public abstract class AbstractDownloader implements Downloader {
 	protected PoolingHttpClientConnectionManager connectionManager(){
 		return this.connectionManager;
 	}
-    /**
-     * A simple method to download a url.
-     *
-     * @param url url
-     * @return html
-     */
-    public Html download(String url) {
-        return download(url, null);
-    }
-
-    /**
-     * A simple method to download a url.
-     *
-     * @param url url
-     * @param charset charset
-     * @return html
-     */
-    public Html download(String url, String charset) {
-        Page page = download(new Request(url), Site.me().setCharset(charset).toTask());
-        return (Html) page.getHtml();
-    }
 
     protected void onSuccess(Request request) {
     }

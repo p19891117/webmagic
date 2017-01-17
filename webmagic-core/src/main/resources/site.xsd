@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-		targetNamespace="http://www.qysudu.com/" 
-		xmlns:tns="http://www.qysudu.com/"
+		targetNamespace="http://www.qysudu.com/site" 
+		xmlns:tns="http://www.qysudu.com/site"
 		elementFormDefault="qualified">
 	<xs:element name="app" type="tns:apptype"/>
 	
@@ -10,6 +10,7 @@
 			<xs:extension base="tns:comm_att_desc">
 				<xs:sequence>
 					<xs:element name="site" type="tns:spidertype" minOccurs="1" maxOccurs="1"/>
+					<xs:any minOccurs="0" maxOccurs="unbounded"/>
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>

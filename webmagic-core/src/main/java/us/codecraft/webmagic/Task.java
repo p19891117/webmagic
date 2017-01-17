@@ -23,5 +23,11 @@ public interface Task {
      * @return site
      */
     public Site getSite();
+    
+    public SpiderExtraProcess getSpiderProcess();
+    
+    public void putExtra(String key,Object value);
+    public <T> T getExtra(String key);
+    public void removeExtra(String key);
 
 }

@@ -21,19 +21,19 @@ public class SiteBuilder {
 			in = Configuer.readForStream("site-default.xml");
 		SAXReader sax = new SAXReader();
 		Map<String, String> namespace = new HashMap<>();
-		namespace.put("tns", "http://www.qysudu.com/");
+		namespace.put("s", "http://www.qysudu.com/site");
 		sax.getDocumentFactory().setXPathNamespaceURIs(namespace);
 		try {
 			Document doc = sax.read(in);
-			org.dom4j.Node siteNode = doc.selectSingleNode("/tns:app/tns:site");
-			String userAgent = siteNode.selectSingleNode("tns:userAgent").getText();
-			String charset = siteNode.selectSingleNode("tns:charset").getText();
-			int sleepTime = Integer.parseInt(siteNode.selectSingleNode("tns:sleepTime").getText());
-			int retryTimes = Integer.parseInt(siteNode.selectSingleNode("tns:retryTimes").getText());
-			int cycleRetryTimes = Integer.parseInt(siteNode.selectSingleNode("tns:cycleRetryTimes").getText());
-			int retrySleepTime = Integer.parseInt(siteNode.selectSingleNode("tns:retrySleepTime").getText());
-			int timeOut = Integer.parseInt(siteNode.selectSingleNode("tns:timeOut").getText());
-			boolean useGzip = Boolean.parseBoolean(siteNode.selectSingleNode("tns:useGzip").getText());
+			org.dom4j.Node siteNode = doc.selectSingleNode("/s:app/s:site");
+			String userAgent = siteNode.selectSingleNode("s:userAgent").getText();
+			String charset = siteNode.selectSingleNode("s:charset").getText();
+			int sleepTime = Integer.parseInt(siteNode.selectSingleNode("s:sleepTime").getText());
+			int retryTimes = Integer.parseInt(siteNode.selectSingleNode("s:retryTimes").getText());
+			int cycleRetryTimes = Integer.parseInt(siteNode.selectSingleNode("s:cycleRetryTimes").getText());
+			int retrySleepTime = Integer.parseInt(siteNode.selectSingleNode("s:retrySleepTime").getText());
+			int timeOut = Integer.parseInt(siteNode.selectSingleNode("s:timeOut").getText());
+			boolean useGzip = Boolean.parseBoolean(siteNode.selectSingleNode("s:useGzip").getText());
 			site.setUserAgent(userAgent);
 			site.setCharset(charset);
 			site.setSleepTime(sleepTime);
@@ -42,7 +42,7 @@ public class SiteBuilder {
 			site.setRetrySleepTime(retrySleepTime);
 			site.setTimeOut(timeOut);
 			site.setUseGzip(useGzip);
-			List<?> headObjs = siteNode.selectNodes("tns:Header/tns:key-value");
+			List<?> headObjs = siteNode.selectNodes("s:Header/s:key-value");
 			if(headObjs!=null){
 				for(Object headobj:headObjs){
 					if(headobj==null)

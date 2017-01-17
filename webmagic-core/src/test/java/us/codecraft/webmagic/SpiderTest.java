@@ -17,7 +17,7 @@ class Baidu extends URLProcessAbs{
 		addPattern("baidu");
 	}
 	@Override
-	public void process(PageProcessor pageProcessor, Page page) {
+	public void process(Task task, PageProcessor pageProcessor, Page page) {
 		System.out.println(page.getRawText());
 	}
 	

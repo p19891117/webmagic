@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<app desc="采集程序配置文件"
-	xmlns="http://www.qysudu.com/" 
+<s:app desc="采集程序配置文件"
+	xmlns:s="http://www.qysudu.com/site" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:schemaLocation="http://www.qysudu.com/ site.xsd ">
-	<site desc="httpclient参数、http协议头">
-		<userAgent>Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0</userAgent>
-		<charset>UTF-8</charset>
-		<sleepTime>5000</sleepTime>
-		<retryTimes>0</retryTimes>
-		<cycleRetryTimes>0</cycleRetryTimes>
-		<retrySleepTime>1000</retrySleepTime>
-		<timeOut>5000</timeOut>
-		<useGzip>true</useGzip>
-		<Header>
-			<key-value  name="User-Agent" value="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0" />
-			<key-value  name="Accept" value="text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" />
-			<key-value  name="Accept-Encoding" value="gzip, deflate" />
-			<key-value  name="Accept-Language" value="zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3" />
-			<key-value  name="Cache-Control" value="no-cache" />
-			<key-value  name="Connection" value="keep-alive" />
-			<key-value  name="Content-Type" value="application/x-www-form-urlencoded; charset=UTF-8" />
-		</Header>
-	</site>
-</app>
+	xsi:schemaLocation="http://www.qysudu.com/site site.xsd ">
+	<s:site desc="httpclient参数、http协议头">
+		<s:userAgent>Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0</s:userAgent>
+		<s:charset>UTF-8</s:charset>
+		<s:sleepTime>5000</s:sleepTime>
+		<s:retryTimes>0</s:retryTimes>
+		<s:cycleRetryTimes>0</s:cycleRetryTimes>
+		<s:retrySleepTime>1000</s:retrySleepTime>
+		<s:timeOut>5000</s:timeOut>
+		<s:useGzip>true</s:useGzip>
+		<s:Header>
+			<s:key-value  name="User-Agent" value="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0" />
+			<s:key-value  name="Accept" value="text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" />
+			<s:key-value  name="Accept-Encoding" value="gzip, deflate" />
+			<s:key-value  name="Accept-Language" value="zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3" />
+			<s:key-value  name="Cache-Control" value="no-cache" />
+			<s:key-value  name="Connection" value="keep-alive" />
+			<s:key-value  name="Content-Type" value="application/x-www-form-urlencoded; charset=UTF-8" />
+		</s:Header>
+	</s:site>
+</s:app>

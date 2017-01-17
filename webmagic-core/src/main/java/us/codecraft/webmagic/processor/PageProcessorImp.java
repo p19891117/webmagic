@@ -5,6 +5,7 @@ import java.util.List;
 
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
+import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.exception.NoPageProcessException;
 import us.codecraft.webmagic.exception.StatusCodeException;
 
@@ -22,7 +23,7 @@ public class PageProcessorImp implements PageProcessor{
 		this.site = site;
 	}
 	@Override
-	public void process(Page page) {
+	public void process(Task task,Page page) {
 		try {
 			int statusCode = page.getStatusCode();
 			if(statusCode>=100&&statusCode<=199){
@@ -35,7 +36,7 @@ public class PageProcessorImp implements PageProcessor{
 				for(URLProcess uRLProces:uRLProcess){
 					if(!uRLProces.matcher(url))
 						continue;
-					uRLProces.process(this,page);
+					uRLProces.process(task,this,page);
 					flag = true;
 					break;
 				}

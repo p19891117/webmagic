@@ -2,6 +2,7 @@ package us.codecraft.webmagic.processor;
 
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
+import us.codecraft.webmagic.Task;
 
 /**
  * Interface to be implemented to customize a crawler.<br>
@@ -24,7 +25,7 @@ public interface PageProcessor {
      *
      * @param page page
      */
-    public void process(Page page);
+    public void process(Task task,Page page);
 
     /**
      * get the site settings
