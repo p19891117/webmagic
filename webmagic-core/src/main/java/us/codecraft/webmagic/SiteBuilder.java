@@ -22,6 +22,8 @@ public class SiteBuilder {
 		SAXReader sax = new SAXReader();
 		Map<String, String> namespace = new HashMap<>();
 		namespace.put("s", "http://www.qysudu.com/site");
+		namespace.put("k", "http://www.qysudu.com/kafka");
+		namespace.put("m", "http://www.qysudu.com/mysql");
 		sax.getDocumentFactory().setXPathNamespaceURIs(namespace);
 		try {
 			Document doc = sax.read(in);
