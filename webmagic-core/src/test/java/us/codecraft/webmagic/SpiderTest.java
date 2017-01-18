@@ -14,7 +14,7 @@ public class SpiderTest {
 }
 class Baidu extends URLProcessAbs{
 	public Baidu(){
-		addPattern("baidu");
+		addPattern("^https://www.baidu.com/$");
 	}
 	@Override
 	public void process(Task task, PageProcessor pageProcessor, Page page) {

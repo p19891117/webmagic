@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHost;
 
 import us.codecraft.webmagic.downloader.Downloader;
 import us.codecraft.webmagic.downloader.HttpClientDownloader;
@@ -62,6 +63,8 @@ public class SpiderBuilder{
 	 * 设置开始url
 	 */
 	private List<Request> requests = new ArrayList<Request>();
+	private String charset;
+	private HttpHost httpProxy;
 	private Map<String, Object> extra = new HashMap<String, Object>();
     public Spider build(){
     	if(pageProcessor==null){
@@ -72,6 +75,10 @@ public class SpiderBuilder{
     			build.setuRLProcess(uRLProcess);
     		pageProcessor = build.build();
     	}
+    	if(httpProxy!=null)
+    		pageProcessor.getSite().setHttpProxy(httpProxy);
+    	if(StringUtils.isNotBlank(charset))
+    		pageProcessor.getSite().setCharset(charset);
     	Spider spider = new Spider(pageProcessor);
     	for(Entry<String, Object> entry:extra.entrySet())
     		spider.putExtra(entry.getKey(), entry.getValue());
@@ -168,6 +175,14 @@ public class SpiderBuilder{
 		if(StringUtils.isBlank(key))
 			return this;
 		extra.put(key, value);
+		return this;
+	}
+	public SpiderBuilder setHttpProxy(HttpHost httpProxy) {
+		this.httpProxy = httpProxy;
+		return this;
+	}
+	public SpiderBuilder setCharset(String charset) {
+		this.charset = charset;
 		return this;
 	}
 }
