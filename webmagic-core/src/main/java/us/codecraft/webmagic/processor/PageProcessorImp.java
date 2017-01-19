@@ -62,7 +62,8 @@ public class PageProcessorImp implements PageProcessor{
 				throw e;
 			}
 		} catch (Exception e) {
-			exception.process(page,this,e);
+			page.getRequest().addOccurError();
+			exception.process(task,page,this,e);
 		}
 	}
 	public void setuRLProcess(List<URLProcess> uRLProcess) {

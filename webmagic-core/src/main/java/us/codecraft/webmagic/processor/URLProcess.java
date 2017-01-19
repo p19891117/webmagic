@@ -2,6 +2,7 @@ package us.codecraft.webmagic.processor;
 
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Task;
+import us.codecraft.webmagic.exception.PageProcessException;
 
 public interface URLProcess {
 	/**
@@ -21,5 +22,5 @@ public interface URLProcess {
 	 * @param pageProcessor 
 	 * @param page
 	 */
-	void process(Task task, PageProcessor pageProcessor, Page page);
+	void process(Task task, PageProcessor pageProcessor, Page page) throws PageProcessException ;
 }

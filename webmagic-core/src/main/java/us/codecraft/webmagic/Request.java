@@ -222,4 +222,14 @@ public class Request implements Serializable {
 	public static ReqBuilder custom(){
 		return new ReqBuilder();
 	}
+	public int occurError(){
+		Integer tmp = (Integer) getExtra("retryNumforExceptionKey");
+		if(tmp==null)
+			tmp = 0;
+		return tmp;
+	}
+	public void addOccurError(){
+		int tmp = occurError();
+		putExtra("retryNumforExceptionKey", (tmp+1));
+	}
 }

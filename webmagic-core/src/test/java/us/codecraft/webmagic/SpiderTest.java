@@ -1,5 +1,6 @@
 package us.codecraft.webmagic;
 
+import us.codecraft.webmagic.exception.PageProcessException;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.processor.URLProcessAbs;
 
@@ -17,8 +18,7 @@ class Baidu extends URLProcessAbs{
 		addPattern("^https://www.baidu.com/$");
 	}
 	@Override
-	public void process(Task task, PageProcessor pageProcessor, Page page) {
+	protected void processPage(Task task, PageProcessor pageProcessor, Page page) throws PageProcessException {
 		System.out.println(page.getRawText());
 	}
-	
 }
